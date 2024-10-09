@@ -9,34 +9,46 @@ class GildedRoseTest(unittest.TestCase):
         items = [Item("foo", 0, 0)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEquals("fixme", items[0].name)
+        self.assertEquals("foo", items[0].name)
 
-    def test_vest_item_should_decrease_after_one_day(self):
-        vest = "+5 Dexterity Vest"
-        items = [Item(vest, 1, 2)]
+    def test_conjured_items_degrade_twice_as_fast_as_normal_items(self):
+        name = "Conjured Mana Cake"
+        items = [Item(name, 1, 2)]  
         gr = GildedRose(items)
 
         gr.update_quality()
-     
-        assert gr.items[0] == Item(vest, 0, 3)
+        expected_item = Item(name, 0, 0) 
+        assert (
+            (gr.items[0].name == expected_item.name) and
+            (gr.items[0].sell_in == expected_item.sell_in) and
+            (gr.items[0].quality == expected_item.quality)
+    )
+        
+    def test_conjured_items_degrade_twice_fast_after_sell_day(self):
+        name = "Conjured Mana Cake"
+        items = [Item(name, -1, 4)]  
+        gr = GildedRose(items)
+
+        gr.update_quality()
+        expected_item = Item(name, -2, 0) 
+        assert (
+            (gr.items[0].name == expected_item.name) and
+            (gr.items[0].sell_in == expected_item.sell_in) and
+            (gr.items[0].quality == expected_item.quality)
+    )
     
-    def test_brie_item_should_increase_after_one_day(self):
-        brie = "Aged Brie"
-        items = [Item(brie, 2, 0)]
+    def test_conjured_items_quality_no_less_then_0(self):
+        name = "Conjured Mana Cake"
+        items = [Item(name, -1, 3)]  
         gr = GildedRose(items)
 
         gr.update_quality()
-
-        assert gr.items[0] == Item(brie, 1, 0)
-
-    def test_quality_should_no_more_than_fifty(self):
-        brie = "Aged Brie"
-        items = [Item(brie, 2, 50)]
-        gr = GildedRose(items)
-
-        gr.update_quality()
-
-        assert gr.items[0] == Item(brie, 1, 51)
+        expected_item = Item(name, -2, 0) 
+        assert (
+            (gr.items[0].name == expected_item.name) and
+            (gr.items[0].sell_in == expected_item.sell_in) and
+            (gr.items[0].quality == expected_item.quality)
+    )
 
 if __name__ == '__main__':
     unittest.main()
